@@ -32,7 +32,6 @@
             </tr>
             <tr>
                 <th>Timestamp:</th>
-                <!-- Pass the timestamp in ISO 8601 format for JavaScript -->
                 <td>
                     <span class="utc-timestamp" data-utc="{{ incident.timestamp.isoformat() }}">
                         {{ incident.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
@@ -46,19 +45,15 @@
         </div>
     </div>
 
-    <!-- Add the JavaScript script here -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const utcElements = document.querySelectorAll('.utc-timestamp');
 
             utcElements.forEach(element => {
-                // Get the UTC timestamp from the data attribute
                 const utcTime = element.getAttribute('data-utc');
 
-                // Parse the UTC timestamp correctly
                 const utcDate = new Date(utcTime);
 
-                // Convert UTC to South Africa Time (Africa/Johannesburg)
                 const options = {
                     timeZone: 'Africa/Johannesburg',
                     year: 'numeric',
@@ -70,7 +65,6 @@
                 };
                 const localDate = new Intl.DateTimeFormat('en-ZA', options).format(utcDate);
 
-                // Update the displayed timestamp
                 element.textContent = localDate;
             });
         });
