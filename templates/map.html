@@ -7,15 +7,12 @@
         let map, marker;
 
         function initMap() {
-            const defaultLocation = { lat: -29.8579, lng: 31.0292 }; // Default to DUT main campus
-
-            // Initialize the map
+            const defaultLocation = { lat: -29.8579, lng: 31.0292 }; 
             map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 15,
                 center: defaultLocation,
             });
 
-            // Add a draggable marker to the map
             marker = new google.maps.Marker({
                 position: defaultLocation,
                 map: map,
@@ -23,13 +20,11 @@
                 title: "Drag to set the location",
             });
 
-            // Update hidden input fields when the marker is dragged
             google.maps.event.addListener(marker, 'dragend', function(event) {
                 document.getElementById("latitude").value = event.latLng.lat();
                 document.getElementById("longitude").value = event.latLng.lng();
             });
 
-            // Use geolocation to track the user's location
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
@@ -38,11 +33,9 @@
                             lng: position.coords.longitude,
                         };
 
-                        // Center the map and move the marker to the user's location
                         map.setCenter(userLocation);
                         marker.setPosition(userLocation);
 
-                        // Update the hidden input fields
                         document.getElementById("latitude").value = userLocation.lat;
                         document.getElementById("longitude").value = userLocation.lng;
                     },
@@ -67,10 +60,9 @@
             <label for="description">Description:</label>
             <textarea id="description" name="description" rows="3" required></textarea>
         </div>
-        <!-- Hidden input fields to store latitude and longitude -->
         <input type="hidden" id="latitude" name="latitude">
         <input type="hidden" id="longitude" name="longitude">
-        <div id="map" style="width: 100%; height: 400px;"></div> <!-- Map container -->
+        <div id="map" style="width: 100%; height: 400px;"></div>
         <button type="submit">Submit Report</button>
     </form>
 </body>
