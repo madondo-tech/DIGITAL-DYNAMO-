@@ -4,8 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from extensions import db  # Import db from extensions.py
-from models import User, Incident  # Import models
+from extensions import db  
+from models import User, Incident  
 from flask_mail import Mail, Message
 
 # Initialize the app and its configurations
@@ -18,22 +18,19 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'dutlostandfound@gmail.com'  # Your email
-app.config['MAIL_PASSWORD'] = 'jyhw jjpm gcjr tvmz'  # Your 
+app.config['MAIL_USERNAME'] = 'dutlostandfound@gmail.com'  
+app.config['MAIL_PASSWORD'] = 'jyhw jjpm gcjr tvmz' 
 
 db.init_app(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# Initialize Flask-Mail
 mail = Mail(app)
 
-# Create database tables
 with app.app_context():
     db.create_all()
 
-# Pre-create an admin user (if not already in database)
 with app.app_context():
     admin = User.query.filter_by(email="admin@dut4life.ac.za").first()
     if not admin:
@@ -48,12 +45,10 @@ with app.app_context():
     else:
         print("🔹 Admin user already exists!")
 
-# User loader for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Routes
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -64,18 +59,15 @@ def register():
         email = request.form['email']
         password = generate_password_hash(request.form['password'], method='pbkdf2:sha256')
         
-        # Validate email domain
         if not email.endswith("@dut4life.ac.za"):
             flash("Only DUT members can register with a @dut4life.ac.za email address", "danger")
             return redirect(url_for('register'))
 
-        # Check if the user already exists
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             flash("Email already registered. Please log in.", "danger")
             return redirect(url_for('login'))
 
-        # Register new user
         new_user = User(email=email, password=password, role='student')
         db.session.add(new_user)
         db.session.commit()
@@ -90,14 +82,12 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
-        # Check admin credentials
         if email == "admin@dut4life.ac.za" and password == "admin123":
             user = User.query.filter_by(email="admin@dut4life.ac.za").first()
             if user and user.role == 'admin':
                 login_user(user)
                 return redirect(url_for('admin_dashboard'))
 
-        # Check database for users
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
